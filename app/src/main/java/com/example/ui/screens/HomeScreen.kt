@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -45,9 +46,10 @@ fun HomeScreen(viewModel: PdfOneViewModel) {
 
 @Composable
 fun HeroCard() {
-    androidx.compose.foundation.Image(
-        painter = painterResource(id = R.drawable.hero_banner_image),
-        contentDescription = "Hero Banner",
+    // Make sure hero_banner.jpg is placed in app/src/main/res/drawable/
+    Image(
+        painter = painterResource(id = R.drawable.hero_banner),
+        contentDescription = "Home Hero Banner",
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(16f / 9f)
