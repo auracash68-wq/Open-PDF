@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.viewmodel.PdfOneViewModel
+import com.example.viewmodel.PdfTool
 import com.example.ui.components.TopBar
 import com.example.ui.components.ToastMessage
 
@@ -46,7 +47,7 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                             shape = CircleShape
                         ) {
                             Text(
-                                text = "63 Available",
+                                text = "${state.tools.size} Available",
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.secondary
@@ -96,7 +97,7 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                     shape = CircleShape,
                     placeholder = { 
                         Text(
-                            text = "Search 63 tools (e.g. merge, compress, ocr)...", 
+                            text = "Search ${state.tools.size} tools (e.g. merge, compress, ocr)...", 
                             style = MaterialTheme.typography.bodyMedium, 
                             color = MaterialTheme.colorScheme.secondary,
                             maxLines = 1,
@@ -123,7 +124,7 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 // Categories
-                val categories = listOf("All", "Organize", "Convert", "Edit", "Secure", "Extract", "Utilities")
+                val categories = listOf("All", "Organize", "Viewing", "Edit", "Scan", "Convert", "Secure", "Optimize")
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(categories) { cat ->
                         val isSelected = state.activeCategory == cat
@@ -162,14 +163,14 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                             Icon(Icons.Outlined.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer, modifier = Modifier.size(12.dp))
                         }
                         Text("FREE TOOLS", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
-                        Text("(23 Unlocked)", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
+                        Text("(${state.tools.count { !it.isPro }} Unlocked)", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
                     }
                     Surface(
                         color = MaterialTheme.colorScheme.primary,
                         shape = CircleShape
                     ) {
                         Text(
-                            text = "PRO (40)",
+                            text = "PRO (${state.tools.count { it.isPro }})",
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onPrimary
@@ -234,7 +235,7 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
 
 @Composable
 fun ToolCard(
-    tool: com.example.viewmodel.Tool,
+    tool: PdfTool,
     isList: Boolean,
     onFavorite: () -> Unit,
     onClick: () -> Unit
@@ -258,7 +259,7 @@ fun ToolCard(
                 ) {
                     // Use a generic icon matching string if possible, here using a placeholder logic
                     Icon(
-                        imageVector = getIconForTool(tool.icon), 
+                        imageVector = tool.icon, 
                         contentDescription = null, 
                         tint = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -307,7 +308,7 @@ fun ToolCard(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            imageVector = getIconForTool(tool.icon), 
+                            imageVector = tool.icon, 
                             contentDescription = null, 
                             tint = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -339,30 +340,5 @@ fun ToolCard(
                 Text(tool.description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
             }
         }
-    }
-}
-
-fun getIconForTool(iconName: String): ImageVector {
-    return when(iconName) {
-        "call_merge" -> Icons.Outlined.CallMerge
-        "call_split" -> Icons.Outlined.CallSplit
-        "autorenew" -> Icons.Outlined.Autorenew
-        "delete_sweep" -> Icons.Outlined.DeleteSweep
-        "document_scanner" -> Icons.Outlined.DocumentScanner
-        "image" -> Icons.Outlined.Image
-        "description" -> Icons.Outlined.Description
-        "edit_note" -> Icons.Outlined.EditNote
-        "compress" -> Icons.Outlined.Compress
-        "draw" -> Icons.Outlined.Draw
-        "ink_pen" -> Icons.Outlined.Draw // Fallback for ink_pen
-        "assignment" -> Icons.Outlined.Assignment
-        "branding_watermark" -> Icons.Outlined.BrandingWatermark
-        "lock" -> Icons.Outlined.Lock
-        "visibility_off" -> Icons.Outlined.VisibilityOff
-        "text_fields" -> Icons.Outlined.TextFields
-        "photo_library" -> Icons.Outlined.PhotoLibrary
-        "chrome_reader_mode" -> Icons.Outlined.ChromeReaderMode
-        "info" -> Icons.Outlined.Info
-        else -> Icons.Outlined.Star
     }
 }
