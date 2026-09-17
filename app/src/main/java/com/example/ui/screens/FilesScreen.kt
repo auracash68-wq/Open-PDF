@@ -29,8 +29,13 @@ import com.example.viewmodel.PdfOneViewModel
 fun FilesScreen(viewModel: PdfOneViewModel) {
     val listState = rememberLazyListState()
     
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val isWide = maxWidth >= 600.dp
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .then(if (isWide) Modifier.widthIn(max = 840.dp).align(Alignment.TopCenter) else Modifier)
+        ) {
             // Utility Bar
             Row(
                 modifier = Modifier
@@ -39,8 +44,17 @@ fun FilesScreen(viewModel: PdfOneViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Files", style = MaterialTheme.typography.headlineSmall)
+                Row(
+                    modifier = Modifier.weight(1f, fill = false),
+                    verticalAlignment = Alignment.CenterVertically, 
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Files", 
+                        style = MaterialTheme.typography.headlineSmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer,
                         shape = CircleShape
@@ -49,7 +63,8 @@ fun FilesScreen(viewModel: PdfOneViewModel) {
                             text = "28",
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                             style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            maxLines = 1
                         )
                     }
                 }
@@ -103,7 +118,7 @@ fun FilesScreen(viewModel: PdfOneViewModel) {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
                     state = listState,
-                    contentPadding = PaddingValues(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 90.dp),
+                    contentPadding = PaddingValues(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 96.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     item {
@@ -119,7 +134,7 @@ fun FilesScreen(viewModel: PdfOneViewModel) {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
                     state = listState,
-                    contentPadding = PaddingValues(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 90.dp),
+                    contentPadding = PaddingValues(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 96.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     groupedFiles.forEach { (groupTitle, files) ->
@@ -137,7 +152,13 @@ fun FilesScreen(viewModel: PdfOneViewModel) {
                         ) {
                             Icon(Icons.Outlined.VerifiedUser, contentDescription = null, tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("All local files synchronized & encrypted", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
+                            Text(
+                                text = "All local files synchronized & encrypted", 
+                                style = MaterialTheme.typography.labelMedium, 
+                                color = MaterialTheme.colorScheme.secondary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
                         }
                     }
                 }
@@ -154,12 +175,18 @@ fun TabItem(title: String, active: Boolean, modifier: Modifier = Modifier) {
             .clickable { }
             .fillMaxWidth()
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically, 
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.padding(horizontal = 4.dp)
+        ) {
             Text(
                 title, 
                 style = if (active) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyMedium,
                 color = if (active) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.padding(bottom = 8.dp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             if (active) {
                 Box(modifier = Modifier.size(6.dp).background(MaterialTheme.colorScheme.primary, CircleShape).offset(y = (-4).dp))
@@ -187,9 +214,10 @@ fun FilterChip(text: String, icon: ImageVector, selected: Boolean, trailing: Boo
                 Icon(icon, contentDescription = null, modifier = Modifier.size(16.dp), tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary)
             }
             Text(
-                text, 
+                text = text, 
                 style = MaterialTheme.typography.labelMedium,
-                color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+                color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+                maxLines = 1
             )
             if (trailing) {
                 Icon(icon, contentDescription = null, modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.secondary)
@@ -206,8 +234,21 @@ fun FileGroup(title: String, count: String, files: List<Triple<String, String, I
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(title.uppercase(), style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold), color = MaterialTheme.colorScheme.secondary)
-            Text(count, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
+            Text(
+                title.uppercase(), 
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold), 
+                color = MaterialTheme.colorScheme.secondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                count, 
+                style = MaterialTheme.typography.labelMedium, 
+                color = MaterialTheme.colorScheme.secondary,
+                maxLines = 1
+            )
         }
         
         files.forEach { (name, meta, icon) ->
@@ -239,14 +280,15 @@ fun FileGroup(title: String, count: String, files: List<Triple<String, String, I
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(name, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        Text(meta, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
+                        Text(meta, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     }
-                    Row {
-                        IconButton(onClick = {}) {
-                            Icon(Icons.Outlined.Share, contentDescription = "Share", tint = MaterialTheme.colorScheme.secondary)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                        IconButton(onClick = {}, modifier = Modifier.size(36.dp)) {
+                            Icon(Icons.Outlined.Share, contentDescription = "Share", tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(20.dp))
                         }
-                        IconButton(onClick = {}) {
-                            Icon(Icons.Outlined.MoreVert, contentDescription = "More", tint = MaterialTheme.colorScheme.secondary)
+                        IconButton(onClick = {}, modifier = Modifier.size(36.dp)) {
+                            Icon(Icons.Outlined.MoreVert, contentDescription = "More", tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(20.dp))
                         }
                     }
                 }

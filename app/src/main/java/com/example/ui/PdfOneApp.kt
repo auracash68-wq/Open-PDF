@@ -1,6 +1,8 @@
 package com.example.ui
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -109,7 +111,9 @@ fun PdfOneApp(viewModel: PdfOneViewModel) {
             NavHost(
                 navController = navController,
                 startDestination = "home",
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .imePadding()
             ) {
                 composable("home") { HomeScreen(viewModel) }
                 composable("tools") { ToolsScreen(viewModel) }
@@ -125,6 +129,7 @@ fun PdfOneApp(viewModel: PdfOneViewModel) {
             exit = scaleOut() + fadeOut(),
             modifier = Modifier
                 .align(androidx.compose.ui.Alignment.BottomEnd)
+                .navigationBarsPadding()
                 .padding(bottom = 16.dp, end = 16.dp)
         ) {
             Surface(

@@ -16,7 +16,8 @@ data class PdfTool(
     val category: String,
     val isPro: Boolean,
     val icon: ImageVector,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val badge: String? = if (isPro) "Pro" else "Free"
 )
 
 data class PdfOneState(

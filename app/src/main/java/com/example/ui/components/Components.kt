@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.R
@@ -33,8 +34,8 @@ fun TopBar(title: String) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(64.dp)
-                .padding(horizontal = 16.dp),
+                .heightIn(min = 64.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -54,7 +55,8 @@ fun TopBar(title: String) {
                 Text(
                     text = "PDF One",
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1
                 )
             }
             
@@ -62,8 +64,12 @@ fun TopBar(title: String) {
                 text = title,
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 8.dp),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             
             Box(
@@ -100,6 +106,7 @@ fun ToastMessage(
         exit = slideOutVertically(targetOffsetY = { it }) + fadeOut(),
         modifier = Modifier
             .fillMaxWidth()
+            .navigationBarsPadding()
             .padding(bottom = 80.dp) // above bottom nav
     ) {
         if (message != null) {

@@ -8,6 +8,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -37,7 +39,7 @@ import com.example.viewmodel.PdfTool
 import com.example.ui.components.TopBar
 import com.example.ui.components.ToastMessage
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun ToolsScreen(viewModel: PdfOneViewModel) {
     val state by viewModel.state.collectAsState()
@@ -65,7 +67,10 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
             ) {
                 if (isSearchExpanded) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().height(64.dp).padding(horizontal = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 64.dp)
+                            .padding(horizontal = 16.dp, vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(onClick = { 
@@ -77,7 +82,7 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                         OutlinedTextField(
                             value = state.searchQuery,
                             onValueChange = { viewModel.updateSearchQuery(it) },
-                            modifier = Modifier.weight(1f).padding(vertical = 8.dp),
+                            modifier = Modifier.weight(1f).padding(vertical = 4.dp),
                             placeholder = { Text("Search tools...") },
                             singleLine = true,
                             colors = OutlinedTextFieldDefaults.colors(
@@ -97,8 +102,8 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(64.dp)
-                            .padding(horizontal = 16.dp),
+                            .heightIn(min = 64.dp)
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
@@ -118,7 +123,8 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                             Text(
                                 text = "PDF One",
                                 style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = MaterialTheme.colorScheme.onSurface,
+                                maxLines = 1
                             )
                         }
                         
@@ -126,8 +132,12 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                             text = "Tools",
                             style = MaterialTheme.typography.headlineSmall,
                             color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.weight(1f),
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 8.dp),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                         
                         Row(
@@ -162,12 +172,17 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
             }
         }
     ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+        BoxWithConstraints(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            val isWide = maxWidth >= 600.dp
+            val gridColumnsCount = if (isWide) 3 else 2
+
             if (!isGridView) {
                 LazyColumn(
                     state = listState,
-                    contentPadding = PaddingValues(bottom = 90.dp),
-                    modifier = Modifier.fillMaxSize()
+                    contentPadding = PaddingValues(bottom = 96.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .then(if (isWide) Modifier.widthIn(max = 840.dp).align(Alignment.TopCenter) else Modifier)
                 ) {
                     // The "Green Box" Items (Collapsible)
                     item {
@@ -177,8 +192,17 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    Text("Suite Catalog", style = MaterialTheme.typography.headlineSmall)
+                                Row(
+                                    modifier = Modifier.weight(1f, fill = false),
+                                    verticalAlignment = Alignment.CenterVertically, 
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Text(
+                                        text = "Suite Catalog", 
+                                        style = MaterialTheme.typography.headlineSmall,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
                                     Surface(
                                         color = MaterialTheme.colorScheme.surfaceContainerHigh,
                                         shape = CircleShape
@@ -187,11 +211,13 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                                             text = "${state.tools.size} Available",
                                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                                             style = MaterialTheme.typography.labelMedium,
-                                            color = MaterialTheme.colorScheme.secondary
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            maxLines = 1
                                         )
                                     }
                                 }
                                 
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Row(
                                     modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer, CircleShape).padding(2.dp)
                                 ) {
@@ -235,7 +261,7 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                             OutlinedTextField(
                                 value = state.searchQuery,
                                 onValueChange = { viewModel.updateSearchQuery(it) },
-                                modifier = Modifier.fillMaxWidth().height(48.dp),
+                                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
                                 shape = CircleShape,
                                 placeholder = { 
                                     Text(
@@ -271,10 +297,13 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(MaterialTheme.colorScheme.background)
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .padding(vertical = 8.dp)
                         ) {
                             val categories = listOf("All", "Organize", "Viewing", "Edit", "Scan", "Convert", "Secure", "Optimize")
-                            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            LazyRow(
+                                contentPadding = PaddingValues(horizontal = 16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
                                 items(categories) { cat ->
                                     val isSelected = state.activeCategory == cat
                                     Surface(
@@ -287,7 +316,8 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                                         Text(
                                             text = cat,
                                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                                            style = MaterialTheme.typography.labelMedium
+                                            style = MaterialTheme.typography.labelMedium,
+                                            maxLines = 1
                                         )
                                     }
                                 }
@@ -298,21 +328,37 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
                                     .background(MaterialTheme.colorScheme.surfaceContainerLow, RoundedCornerShape(12.dp))
                                     .padding(12.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Row(
+                                    modifier = Modifier.weight(1f, fill = false),
+                                    verticalAlignment = Alignment.CenterVertically, 
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
                                     Box(
                                         modifier = Modifier.size(20.dp).background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Icon(Icons.Outlined.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer, modifier = Modifier.size(12.dp))
                                     }
-                                    Text("FREE TOOLS", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
-                                    Text("(${state.tools.count { !it.isPro }} Unlocked)", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
+                                    Text(
+                                        text = "FREE TOOLS", 
+                                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                                        maxLines = 1
+                                    )
+                                    Text(
+                                        text = "(${state.tools.count { !it.isPro }} Unlocked)", 
+                                        style = MaterialTheme.typography.bodyMedium, 
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
                                 }
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Surface(
                                     color = MaterialTheme.colorScheme.primary,
                                     shape = CircleShape
@@ -321,7 +367,8 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                                         text = "PRO (${state.tools.count { it.isPro }})",
                                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                                        color = MaterialTheme.colorScheme.onPrimary
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                        maxLines = 1
                                     )
                                 }
                             }
@@ -374,22 +421,33 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                 }
             } else {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
+                    columns = GridCells.Fixed(gridColumnsCount),
                     state = gridState,
-                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 90.dp),
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 96.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .then(if (isWide) Modifier.widthIn(max = 840.dp).align(Alignment.TopCenter) else Modifier)
                 ) {
-                    item(span = { GridItemSpan(2) }) {
+                    item(span = { GridItemSpan(gridColumnsCount) }) {
                         Column(modifier = Modifier.padding(top = 16.dp)) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    Text("Suite Catalog", style = MaterialTheme.typography.headlineSmall)
+                                Row(
+                                    modifier = Modifier.weight(1f, fill = false),
+                                    verticalAlignment = Alignment.CenterVertically, 
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Text(
+                                        text = "Suite Catalog", 
+                                        style = MaterialTheme.typography.headlineSmall,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
                                     Surface(
                                         color = MaterialTheme.colorScheme.surfaceContainerHigh,
                                         shape = CircleShape
@@ -398,11 +456,13 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                                             text = "${state.tools.size} Available",
                                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                                             style = MaterialTheme.typography.labelMedium,
-                                            color = MaterialTheme.colorScheme.secondary
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            maxLines = 1
                                         )
                                     }
                                 }
                                 
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Row(
                                     modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer, CircleShape).padding(2.dp)
                                 ) {
@@ -446,7 +506,7 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                             OutlinedTextField(
                                 value = state.searchQuery,
                                 onValueChange = { viewModel.updateSearchQuery(it) },
-                                modifier = Modifier.fillMaxWidth().height(48.dp),
+                                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
                                 shape = CircleShape,
                                 placeholder = { 
                                     Text(
@@ -476,7 +536,7 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                         }
                     }
 
-                    item(span = { GridItemSpan(2) }) {
+                    item(span = { GridItemSpan(gridColumnsCount) }) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -484,7 +544,9 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                                 .padding(vertical = 4.dp)
                         ) {
                             val categories = listOf("All", "Organize", "Viewing", "Edit", "Scan", "Convert", "Secure", "Optimize")
-                            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
                                 items(categories) { cat ->
                                     val isSelected = state.activeCategory == cat
                                     Surface(
@@ -497,7 +559,8 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                                         Text(
                                             text = cat,
                                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                                            style = MaterialTheme.typography.labelMedium
+                                            style = MaterialTheme.typography.labelMedium,
+                                            maxLines = 1
                                         )
                                     }
                                 }
@@ -513,16 +576,31 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Row(
+                                    modifier = Modifier.weight(1f, fill = false),
+                                    verticalAlignment = Alignment.CenterVertically, 
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
                                     Box(
                                         modifier = Modifier.size(20.dp).background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Icon(Icons.Outlined.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer, modifier = Modifier.size(12.dp))
                                     }
-                                    Text("FREE TOOLS", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
-                                    Text("(${state.tools.count { !it.isPro }} Unlocked)", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
+                                    Text(
+                                        text = "FREE TOOLS", 
+                                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                                        maxLines = 1
+                                    )
+                                    Text(
+                                        text = "(${state.tools.count { !it.isPro }} Unlocked)", 
+                                        style = MaterialTheme.typography.bodyMedium, 
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
                                 }
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Surface(
                                     color = MaterialTheme.colorScheme.primary,
                                     shape = CircleShape
@@ -531,7 +609,8 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                                         text = "PRO (${state.tools.count { it.isPro }})",
                                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                                        color = MaterialTheme.colorScheme.onPrimary
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                        maxLines = 1
                                     )
                                 }
                             }
@@ -539,7 +618,7 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                     }
 
                     if (state.filteredTools.isEmpty()) {
-                        item(span = { GridItemSpan(2) }) {
+                        item(span = { GridItemSpan(gridColumnsCount) }) {
                             Column(
                                 modifier = Modifier.fillMaxWidth().padding(top = 48.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -560,7 +639,7 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                     } else {
                         val grouped = state.filteredTools.groupBy { it.category }
                         grouped.forEach { (category, tools) ->
-                            item(span = { GridItemSpan(2) }) {
+                            item(span = { GridItemSpan(gridColumnsCount) }) {
                                 Text(
                                     text = category.uppercase(),
                                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
@@ -589,6 +668,7 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ToolCard(
     tool: PdfTool,
@@ -604,7 +684,9 @@ fun ToolCard(
     ) {
         if (isList) {
             Row(
-                modifier = Modifier.padding(14.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(14.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
@@ -613,50 +695,80 @@ fun ToolCard(
                         .background(if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(8.dp)),
                     contentAlignment = Alignment.Center
                 ) {
-                    // Use a generic icon matching string if possible, here using a placeholder logic
                     Icon(
                         imageVector = tool.icon, 
                         contentDescription = null, 
                         tint = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(tool.name, style = MaterialTheme.typography.titleMedium)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Surface(
-                            color = if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
-                            shape = RoundedCornerShape(4.dp)
-                        ) {
-                            Text(
-                                text = if (tool.isPro) "Pro" else "Free",
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.secondary
-                            )
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = tool.name, 
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        if (tool.badge != null) {
+                            Surface(
+                                color = if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
+                                shape = RoundedCornerShape(4.dp)
+                            ) {
+                                Text(
+                                    text = tool.badge,
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.secondary,
+                                    maxLines = 1
+                                )
+                            }
                         }
                     }
-                    Text(tool.description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = tool.description, 
+                        style = MaterialTheme.typography.bodyMedium, 
+                        color = MaterialTheme.colorScheme.secondary
+                    )
                 }
-                Row {
-                    IconButton(onClick = onFavorite) {
+                Spacer(modifier = Modifier.width(8.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    IconButton(
+                        onClick = onFavorite,
+                        modifier = Modifier.size(36.dp)
+                    ) {
                         Icon(
-                            if (tool.isFavorite) Icons.Outlined.Star else Icons.Outlined.StarOutline,
+                            imageVector = if (tool.isFavorite) Icons.Outlined.Star else Icons.Outlined.StarOutline,
                             contentDescription = "Favorite",
-                            tint = if (tool.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+                            tint = if (tool.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
-                    Icon(Icons.Outlined.ChevronRight, contentDescription = null, tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.padding(12.dp))
+                    Icon(
+                        imageVector = Icons.Outlined.ChevronRight, 
+                        contentDescription = null, 
+                        tint = MaterialTheme.colorScheme.secondary, 
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
             }
         } else {
-            // Grid layout equivalent, keeping it simple for now as row for demo, but you would normally use a LazyVerticalGrid
             Column(
-                modifier = Modifier.padding(14.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(14.dp),
                 horizontalAlignment = Alignment.Start
             ) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(), 
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                      Box(
                         modifier = Modifier
                             .size(40.dp)
@@ -669,30 +781,40 @@ fun ToolCard(
                             tint = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    IconButton(onClick = onFavorite) {
+                    IconButton(
+                        onClick = onFavorite,
+                        modifier = Modifier.size(36.dp)
+                    ) {
                         Icon(
-                            if (tool.isFavorite) Icons.Outlined.Star else Icons.Outlined.StarOutline,
+                            imageVector = if (tool.isFavorite) Icons.Outlined.Star else Icons.Outlined.StarOutline,
                             contentDescription = "Favorite",
-                            tint = if (tool.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+                            tint = if (tool.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
                     Text(tool.name, style = MaterialTheme.typography.titleMedium)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Surface(
-                        color = if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
-                        shape = RoundedCornerShape(4.dp)
-                    ) {
-                        Text(
-                            text = if (tool.isPro) "Pro" else "Free",
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.secondary
-                        )
+                    if (tool.badge != null) {
+                        Surface(
+                            color = if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(
+                                text = tool.badge,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.secondary,
+                                maxLines = 1
+                            )
+                        }
                     }
                 }
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(tool.description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
             }
         }
@@ -733,6 +855,7 @@ fun GridToolCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min)
+                .defaultMinSize(minHeight = 120.dp)
                 .background(Color.White)
         ) {
             // Left Edge: small vertical colored bar (approx 4.dp wide, full height of the card)
@@ -753,23 +876,42 @@ fun GridToolCard(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                shape = RoundedCornerShape(10.dp)
-                            ),
-                        contentAlignment = Alignment.Center
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Icon(
-                            imageVector = tool.icon,
-                            contentDescription = null,
-                            tint = if (tool.isPro) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(20.dp)
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .background(
+                                    color = if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    shape = RoundedCornerShape(10.dp)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = tool.icon,
+                                contentDescription = null,
+                                tint = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        if (tool.badge != null) {
+                            Surface(
+                                color = if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
+                                shape = RoundedCornerShape(4.dp)
+                            ) {
+                                Text(
+                                    text = tool.badge,
+                                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 1.dp),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.secondary,
+                                    maxLines = 1
+                                )
+                            }
+                        }
                     }
                     
                     IconButton(
