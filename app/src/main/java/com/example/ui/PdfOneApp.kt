@@ -7,6 +7,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.animation.*
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,13 +22,19 @@ fun PdfOneApp(viewModel: PdfOneViewModel) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: "home"
+    val state by viewModel.state.collectAsState()
 
     Scaffold(
         bottomBar = {
-            NavigationBar(
-                containerColor = MaterialTheme.colorScheme.surface,
-                tonalElevation = 8.dp
+            AnimatedVisibility(
+                visible = state.isBottomNavVisible,
+                enter = slideInVertically(initialOffsetY = { it }),
+                exit = slideOutVertically(targetOffsetY = { it })
             ) {
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 8.dp
+                ) {
                 val items = listOf(
                     BottomNavItem("home", "Home", Icons.Outlined.Dashboard),
                     BottomNavItem("tools", "Tools", Icons.Outlined.GridView),
@@ -55,9 +63,9 @@ fun PdfOneApp(viewModel: PdfOneViewModel) {
                             }
                         },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.primary,
-                            selectedTextColor = MaterialTheme.colorScheme.primary,
-                            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedIconColor = Color(0xFFBB0018),
+                            selectedTextColor = Color(0xFFBB0018),
+                            indicatorColor = Color.White,
                             unselectedIconColor = MaterialTheme.colorScheme.secondary,
                             unselectedTextColor = MaterialTheme.colorScheme.secondary
                         )
@@ -65,6 +73,7 @@ fun PdfOneApp(viewModel: PdfOneViewModel) {
                 }
             }
         }
+    }
     ) { innerPadding ->
         NavHost(
             navController = navController,

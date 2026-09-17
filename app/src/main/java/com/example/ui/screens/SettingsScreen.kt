@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,16 +24,23 @@ import com.example.R
 import com.example.ui.components.TopBar
 import com.example.ui.components.ToastMessage
 import com.example.viewmodel.PdfOneViewModel
+import com.example.ui.components.rememberIsScrollingUp
 
 @Composable
 fun SettingsScreen(viewModel: PdfOneViewModel) {
+    val listState = rememberLazyListState()
+    val isScrollingUp = rememberIsScrollingUp(listState)
+    
+    LaunchedEffect(isScrollingUp) {
+        viewModel.setBottomNavVisible(isScrollingUp)
+    }
     val state by viewModel.state.collectAsState()
     
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
             TopBar("Settings")
             
-            LazyColumn(
+            LazyColumn(state = listState, 
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {

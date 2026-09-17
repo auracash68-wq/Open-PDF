@@ -5,12 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,12 +28,19 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.example.R
 import com.example.ui.components.TopBar
 import com.example.viewmodel.PdfOneViewModel
+import com.example.ui.components.rememberIsScrollingUp
 
 @Composable
 fun HomeScreen(viewModel: PdfOneViewModel) {
+    val listState = rememberLazyListState()
+    val isScrollingUp = rememberIsScrollingUp(listState)
+    
+    LaunchedEffect(isScrollingUp) {
+        viewModel.setBottomNavVisible(isScrollingUp)
+    }
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar("Home")
-        LazyColumn(
+        LazyColumn(state = listState, 
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)

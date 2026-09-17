@@ -1,52 +1,18 @@
-package com.example.ui.screens
+import re
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import com.example.viewmodel.PdfOneViewModel
-import com.example.ui.components.rememberIsScrollingUp
-import com.example.viewmodel.PdfTool
-import com.example.ui.components.TopBar
-import com.example.ui.components.ToastMessage
+with open("/app/applet/app/src/main/java/com/example/ui/screens/ToolsScreen.kt", "r") as f:
+    content = f.read()
 
-@OptIn(ExperimentalFoundationApi::class)
+# We need to add ExperimentalFoundationApi
+if "import androidx.compose.foundation.ExperimentalFoundationApi" not in content:
+    content = content.replace("import androidx.compose.foundation.lazy.LazyColumn", 
+                              "import androidx.compose.foundation.ExperimentalFoundationApi\nimport androidx.compose.foundation.lazy.LazyColumn")
+
+new_tools_screen = """@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ToolsScreen(viewModel: PdfOneViewModel) {
     val state by viewModel.state.collectAsState()
     var isSearchExpanded by remember { mutableStateOf(false) }
-    val listState = rememberLazyListState()
-        val isScrollingUp = rememberIsScrollingUp(listState)
-    
-    LaunchedEffect(isScrollingUp) {
-        viewModel.setBottomNavVisible(isScrollingUp)
-    }
-    val isTopSearchBarVisible by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex > 0
-        }
-    }
 
     Scaffold(
         topBar = {
@@ -126,14 +92,8 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.End
                         ) {
-                            AnimatedVisibility(
-                                visible = isTopSearchBarVisible,
-                                enter = fadeIn(),
-                                exit = fadeOut()
-                            ) {
-                                IconButton(onClick = { isSearchExpanded = true }) {
-                                    Icon(Icons.Outlined.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurface)
-                                }
+                            IconButton(onClick = { isSearchExpanded = true }) {
+                                Icon(Icons.Outlined.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurface)
                             }
                             Box(
                                 modifier = Modifier
@@ -156,7 +116,6 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             LazyColumn(
-                state = listState,
                 contentPadding = PaddingValues(bottom = 90.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -364,114 +323,14 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
             )
         }
     }
-}
+}"""
 
-@Composable
-fun ToolCard(
-    tool: PdfTool,
-    isList: Boolean,
-    onFavorite: () -> Unit,
-    onClick: () -> Unit
-) {
-    Surface(
-        modifier = Modifier.fillMaxWidth().clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
-        shadowElevation = 1.dp
-    ) {
-        if (isList) {
-            Row(
-                modifier = Modifier.padding(14.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(8.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    // Use a generic icon matching string if possible, here using a placeholder logic
-                    Icon(
-                        imageVector = tool.icon, 
-                        contentDescription = null, 
-                        tint = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(tool.name, style = MaterialTheme.typography.titleMedium)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Surface(
-                            color = if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
-                            shape = RoundedCornerShape(4.dp)
-                        ) {
-                            Text(
-                                text = if (tool.isPro) "Pro" else "Free",
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.secondary
-                            )
-                        }
-                    }
-                    Text(tool.description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
-                }
-                Row {
-                    IconButton(onClick = onFavorite) {
-                        Icon(
-                            if (tool.isFavorite) Icons.Outlined.Star else Icons.Outlined.StarOutline,
-                            contentDescription = "Favorite",
-                            tint = if (tool.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
-                        )
-                    }
-                    Icon(Icons.Outlined.ChevronRight, contentDescription = null, tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.padding(12.dp))
-                }
-            }
-        } else {
-            // Grid layout equivalent, keeping it simple for now as row for demo, but you would normally use a LazyVerticalGrid
-            Column(
-                modifier = Modifier.padding(14.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                     Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(8.dp)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = tool.icon, 
-                            contentDescription = null, 
-                            tint = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    IconButton(onClick = onFavorite) {
-                        Icon(
-                            if (tool.isFavorite) Icons.Outlined.Star else Icons.Outlined.StarOutline,
-                            contentDescription = "Favorite",
-                            tint = if (tool.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(tool.name, style = MaterialTheme.typography.titleMedium)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Surface(
-                        color = if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
-                        shape = RoundedCornerShape(4.dp)
-                    ) {
-                        Text(
-                            text = if (tool.isPro) "Pro" else "Free",
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.secondary
-                        )
-                    }
-                }
-                Text(tool.description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
-            }
-        }
-    }
-}
+# Find the start of ToolsScreen function
+start_idx = content.find("@Composable\nfun ToolsScreen")
+end_idx = content.find("@Composable\nfun ToolCard")
+
+if start_idx != -1 and end_idx != -1:
+    content = content[:start_idx] + new_tools_screen + "\n\n" + content[end_idx:]
+
+with open("/app/applet/app/src/main/java/com/example/ui/screens/ToolsScreen.kt", "w") as f:
+    f.write(content)

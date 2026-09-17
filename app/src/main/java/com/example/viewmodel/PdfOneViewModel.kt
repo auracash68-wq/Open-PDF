@@ -27,7 +27,8 @@ data class PdfOneState(
     val activeCategory: String = "All",
     val fullscreenMode: Boolean = false,
     val saveToDevice: Boolean = true,
-    val toastMessage: String? = null
+    val toastMessage: String? = null,
+    val isBottomNavVisible: Boolean = true
 )
 
 class PdfOneViewModel : ViewModel() {
@@ -172,6 +173,12 @@ class PdfOneViewModel : ViewModel() {
 
     fun showToast(message: String) {
         _state.update { it.copy(toastMessage = message) }
+    }
+
+    fun setBottomNavVisible(visible: Boolean) {
+        if (_state.value.isBottomNavVisible != visible) {
+            _state.update { it.copy(isBottomNavVisible = visible) }
+        }
     }
 
     fun clearToast() {

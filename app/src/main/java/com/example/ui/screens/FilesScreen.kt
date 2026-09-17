@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -23,9 +24,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
 import com.example.ui.components.ToastMessage
 import com.example.viewmodel.PdfOneViewModel
+import com.example.ui.components.rememberIsScrollingUp
 
 @Composable
 fun FilesScreen(viewModel: PdfOneViewModel) {
+    val listState = rememberLazyListState()
+    val isScrollingUp = rememberIsScrollingUp(listState)
+    
+    LaunchedEffect(isScrollingUp) {
+        viewModel.setBottomNavVisible(isScrollingUp)
+    }
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
             // Utility Bar
@@ -142,18 +150,116 @@ fun FilesScreen(viewModel: PdfOneViewModel) {
             )
 
             if (groupedFiles.isEmpty()) {
-                Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Icon(Icons.Outlined.FolderOff, contentDescription = null, modifier = Modifier.size(48.dp), tint = MaterialTheme.colorScheme.secondary)
-                        Text("No files found", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    state = listState,
+                    contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 90.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    item {
+                        Surface(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                                        shape = RoundedCornerShape(12.dp),
+                                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                                        shadowElevation = 1.dp
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(12.dp),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                                Box(
+                                                    modifier = Modifier.size(36.dp).background(MaterialTheme.colorScheme.surfaceContainerHighest, RoundedCornerShape(8.dp)),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    Icon(Icons.Outlined.DonutLarge, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                                                }
+                                                Column {
+                                                    Text("Device Storage Synced", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
+                                                    Text("14.8 GB free of 128 GB", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
+                                                }
+                                            }
+                                            Surface(
+                                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                                shape = CircleShape,
+                                                modifier = Modifier.clickable { }
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                                ) {
+                                                    Text("Clean", style = MaterialTheme.typography.labelMedium)
+                                                    Icon(Icons.Outlined.AutoAwesome, contentDescription = null, modifier = Modifier.size(14.dp))
+                                                }
+                                            }
+                                        }
+                                    }
+                    }
+                    
+                    item {
+                        Box(modifier = Modifier.fillMaxWidth().padding(top = 32.dp), contentAlignment = Alignment.Center) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Icon(Icons.Outlined.FolderOff, contentDescription = null, modifier = Modifier.size(48.dp), tint = MaterialTheme.colorScheme.secondary)
+                                Text("No files found", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
+                            }
+                        }
                     }
                 }
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 100.dp),
+                    state = listState,
+                    contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 90.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
+                    item {
+                        Surface(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                                        shape = RoundedCornerShape(12.dp),
+                                        color = MaterialTheme.colorScheme.surfaceContainerLow,
+                                        shadowElevation = 1.dp
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(12.dp),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                                Box(
+                                                    modifier = Modifier.size(36.dp).background(MaterialTheme.colorScheme.surfaceContainerHighest, RoundedCornerShape(8.dp)),
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    Icon(Icons.Outlined.DonutLarge, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                                                }
+                                                Column {
+                                                    Text("Device Storage Synced", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
+                                                    Text("14.8 GB free of 128 GB", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
+                                                }
+                                            }
+                                            Surface(
+                                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                                shape = CircleShape,
+                                                modifier = Modifier.clickable { }
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                                ) {
+                                                    Text("Clean", style = MaterialTheme.typography.labelMedium)
+                                                    Icon(Icons.Outlined.AutoAwesome, contentDescription = null, modifier = Modifier.size(14.dp))
+                                                }
+                                            }
+                                        }
+                                    }
+                    }
+                    
                     groupedFiles.forEach { (groupTitle, files) ->
                         item {
                             val countStr = if (files.size == 1) "1 file" else "${files.size} files"
