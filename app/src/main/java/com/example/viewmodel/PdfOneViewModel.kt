@@ -28,7 +28,8 @@ data class PdfOneState(
     val fullscreenMode: Boolean = false,
     val saveToDevice: Boolean = true,
     val toastMessage: String? = null,
-    val isBottomNavVisible: Boolean = true
+    val isBottomNavVisible: Boolean = true,
+    val isFloatingBubbleVisible: Boolean = false
 )
 
 class PdfOneViewModel : ViewModel() {
@@ -178,6 +179,12 @@ class PdfOneViewModel : ViewModel() {
     fun setBottomNavVisible(visible: Boolean) {
         if (_state.value.isBottomNavVisible != visible) {
             _state.update { it.copy(isBottomNavVisible = visible) }
+        }
+    }
+
+    fun setFloatingBubbleVisible(visible: Boolean) {
+        if (_state.value.isFloatingBubbleVisible != visible) {
+            _state.update { it.copy(isFloatingBubbleVisible = visible) }
         }
     }
 

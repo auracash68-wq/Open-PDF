@@ -26,7 +26,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.viewmodel.PdfOneViewModel
-import com.example.ui.components.rememberIsScrollingUp
 import com.example.viewmodel.PdfTool
 import com.example.ui.components.TopBar
 import com.example.ui.components.ToastMessage
@@ -37,11 +36,7 @@ fun ToolsScreen(viewModel: PdfOneViewModel) {
     val state by viewModel.state.collectAsState()
     var isSearchExpanded by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
-        val isScrollingUp = rememberIsScrollingUp(listState)
     
-    LaunchedEffect(isScrollingUp) {
-        viewModel.setBottomNavVisible(isScrollingUp)
-    }
     val isTopSearchBarVisible by remember {
         derivedStateOf {
             listState.firstVisibleItemIndex > 0

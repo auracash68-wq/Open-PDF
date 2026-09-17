@@ -28,16 +28,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.example.R
 import com.example.ui.components.TopBar
 import com.example.viewmodel.PdfOneViewModel
-import com.example.ui.components.rememberIsScrollingUp
 
 @Composable
 fun HomeScreen(viewModel: PdfOneViewModel) {
     val listState = rememberLazyListState()
-    val isScrollingUp = rememberIsScrollingUp(listState)
     
-    LaunchedEffect(isScrollingUp) {
-        viewModel.setBottomNavVisible(isScrollingUp)
-    }
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar("Home")
         LazyColumn(state = listState, 

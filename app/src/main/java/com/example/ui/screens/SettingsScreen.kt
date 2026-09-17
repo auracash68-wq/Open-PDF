@@ -24,16 +24,11 @@ import com.example.R
 import com.example.ui.components.TopBar
 import com.example.ui.components.ToastMessage
 import com.example.viewmodel.PdfOneViewModel
-import com.example.ui.components.rememberIsScrollingUp
 
 @Composable
 fun SettingsScreen(viewModel: PdfOneViewModel) {
     val listState = rememberLazyListState()
-    val isScrollingUp = rememberIsScrollingUp(listState)
     
-    LaunchedEffect(isScrollingUp) {
-        viewModel.setBottomNavVisible(isScrollingUp)
-    }
     val state by viewModel.state.collectAsState()
     
     Box(modifier = Modifier.fillMaxSize()) {

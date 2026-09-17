@@ -24,16 +24,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
 import com.example.ui.components.ToastMessage
 import com.example.viewmodel.PdfOneViewModel
-import com.example.ui.components.rememberIsScrollingUp
 
 @Composable
 fun FilesScreen(viewModel: PdfOneViewModel) {
     val listState = rememberLazyListState()
-    val isScrollingUp = rememberIsScrollingUp(listState)
     
-    LaunchedEffect(isScrollingUp) {
-        viewModel.setBottomNavVisible(isScrollingUp)
-    }
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
             // Utility Bar
@@ -89,49 +84,6 @@ fun FilesScreen(viewModel: PdfOneViewModel) {
                 item { FilterChip(text = "Images", icon = Icons.Outlined.Image, selected = false) }
                 item { FilterChip(text = "By date", icon = Icons.Outlined.KeyboardArrowDown, selected = false, trailing = true) }
                 item { FilterChip(text = "Internal Storage", icon = Icons.Outlined.Cloud, selected = false, trailing = true) }
-            }
-            
-            // Storage Banner
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
-                shadowElevation = 1.dp
-            ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Box(
-                            modifier = Modifier.size(36.dp).background(MaterialTheme.colorScheme.surfaceContainerHighest, RoundedCornerShape(8.dp)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(Icons.Outlined.DonutLarge, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-                        }
-                        Column {
-                            Text("Device Storage Synced", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
-                            Text("14.8 GB free of 128 GB", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
-                        }
-                    }
-                    Surface(
-                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                        shape = CircleShape,
-                        modifier = Modifier.clickable { }
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Text("Clean", style = MaterialTheme.typography.labelMedium)
-                            Icon(Icons.Outlined.AutoAwesome, contentDescription = null, modifier = Modifier.size(14.dp))
-                        }
-                    }
-                }
             }
             
             // Date-Grouped List
