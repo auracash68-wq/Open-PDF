@@ -66,11 +66,10 @@ fun FilesScreen(viewModel: PdfOneViewModel) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(24.dp)
+                horizontalArrangement = Arrangement.Center
             ) {
-                TabItem("My files", true)
-                TabItem("Recently opened (6)", false)
-                TabItem("Starred", false)
+                TabItem("My files", true, modifier = Modifier.weight(1f))
+                TabItem("Recently opened (6)", false, modifier = Modifier.weight(1f))
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainerHigh)
             
@@ -83,7 +82,6 @@ fun FilesScreen(viewModel: PdfOneViewModel) {
                 item { FilterChip(text = "PDF", icon = Icons.Outlined.PictureAsPdf, selected = false) }
                 item { FilterChip(text = "Images", icon = Icons.Outlined.Image, selected = false) }
                 item { FilterChip(text = "By date", icon = Icons.Outlined.KeyboardArrowDown, selected = false, trailing = true) }
-                item { FilterChip(text = "Internal Storage", icon = Icons.Outlined.Cloud, selected = false, trailing = true) }
             }
             
             // Date-Grouped List
@@ -105,53 +103,9 @@ fun FilesScreen(viewModel: PdfOneViewModel) {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
                     state = listState,
-                    contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 90.dp),
+                    contentPadding = PaddingValues(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 90.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    item {
-                        Surface(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                                        shape = RoundedCornerShape(12.dp),
-                                        color = MaterialTheme.colorScheme.surfaceContainerLow,
-                                        shadowElevation = 1.dp
-                                    ) {
-                                        Row(
-                                            modifier = Modifier.padding(12.dp),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                                Box(
-                                                    modifier = Modifier.size(36.dp).background(MaterialTheme.colorScheme.surfaceContainerHighest, RoundedCornerShape(8.dp)),
-                                                    contentAlignment = Alignment.Center
-                                                ) {
-                                                    Icon(Icons.Outlined.DonutLarge, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-                                                }
-                                                Column {
-                                                    Text("Device Storage Synced", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
-                                                    Text("14.8 GB free of 128 GB", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
-                                                }
-                                            }
-                                            Surface(
-                                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                                                shape = CircleShape,
-                                                modifier = Modifier.clickable { }
-                                            ) {
-                                                Row(
-                                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                                                    verticalAlignment = Alignment.CenterVertically,
-                                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                                ) {
-                                                    Text("Clean", style = MaterialTheme.typography.labelMedium)
-                                                    Icon(Icons.Outlined.AutoAwesome, contentDescription = null, modifier = Modifier.size(14.dp))
-                                                }
-                                            }
-                                        }
-                                    }
-                    }
-                    
                     item {
                         Box(modifier = Modifier.fillMaxWidth().padding(top = 32.dp), contentAlignment = Alignment.Center) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -165,53 +119,9 @@ fun FilesScreen(viewModel: PdfOneViewModel) {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
                     state = listState,
-                    contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 90.dp),
+                    contentPadding = PaddingValues(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 90.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    item {
-                        Surface(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                                        shape = RoundedCornerShape(12.dp),
-                                        color = MaterialTheme.colorScheme.surfaceContainerLow,
-                                        shadowElevation = 1.dp
-                                    ) {
-                                        Row(
-                                            modifier = Modifier.padding(12.dp),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                                Box(
-                                                    modifier = Modifier.size(36.dp).background(MaterialTheme.colorScheme.surfaceContainerHighest, RoundedCornerShape(8.dp)),
-                                                    contentAlignment = Alignment.Center
-                                                ) {
-                                                    Icon(Icons.Outlined.DonutLarge, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-                                                }
-                                                Column {
-                                                    Text("Device Storage Synced", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold))
-                                                    Text("14.8 GB free of 128 GB", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
-                                                }
-                                            }
-                                            Surface(
-                                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                                                shape = CircleShape,
-                                                modifier = Modifier.clickable { }
-                                            ) {
-                                                Row(
-                                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                                                    verticalAlignment = Alignment.CenterVertically,
-                                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                                ) {
-                                                    Text("Clean", style = MaterialTheme.typography.labelMedium)
-                                                    Icon(Icons.Outlined.AutoAwesome, contentDescription = null, modifier = Modifier.size(14.dp))
-                                                }
-                                            }
-                                        }
-                                    }
-                    }
-                    
                     groupedFiles.forEach { (groupTitle, files) ->
                         item {
                             val countStr = if (files.size == 1) "1 file" else "${files.size} files"
@@ -233,34 +143,16 @@ fun FilesScreen(viewModel: PdfOneViewModel) {
                 }
             }
         }
-        
-        // FAB
-        FloatingActionButton(
-            onClick = { /* TODO Add File */ },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-                .padding(bottom = 16.dp), // extra padding for bottom nav
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-            shape = CircleShape
-        ) {
-            Row(modifier = Modifier.padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Outlined.Add, contentDescription = "Add File")
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Add File", style = MaterialTheme.typography.labelMedium)
-            }
-        }
     }
 }
 
 @Composable
-fun TabItem(title: String, active: Boolean) {
+fun TabItem(title: String, active: Boolean, modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
+        modifier = modifier
             .clickable { }
-            .width(IntrinsicSize.Max)
+            .fillMaxWidth()
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(

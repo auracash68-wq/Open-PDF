@@ -36,8 +36,8 @@ fun SettingsScreen(viewModel: PdfOneViewModel) {
             TopBar("Settings")
             
             LazyColumn(state = listState, 
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
+                contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 80.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 item {
                     // Pro Upgrade Banner Image
@@ -141,17 +141,12 @@ fun SettingsScreen(viewModel: PdfOneViewModel) {
                 }
                 
                 item {
-                    SettingsSection("Reset & Clear") {
-                        SettingsRow("Clear recent files list", subtitle = "Removes entries from Recents; your PDFs on disk are not deleted.", showChevron = true, onClick = { viewModel.showToast("Recents list cleared") })
-                        HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer, modifier = Modifier.padding(horizontal = 16.dp))
-                        SettingsRow("Clear favorite tools", subtitle = "Empty the home shortcuts; tools stay available in the catalog.", showChevron = true, onClick = { viewModel.showToast("Favorite tools cleared") })
-                        HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer, modifier = Modifier.padding(horizontal = 16.dp))
-                        SettingsRow("Clear reading bookmarks", subtitle = "Removes saved page bookmarks from the PDF viewer.", showChevron = true, onClick = { viewModel.showToast("Reading bookmarks cleared") })
-                    }
-                }
-                
-                item {
-                    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp), 
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                             Icon(Icons.Outlined.VerifiedUser, contentDescription = null, tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(16.dp))
                             Text("PDF All-in-One v4.8.2 (Build 4820)", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
