@@ -38,6 +38,7 @@ import com.example.viewmodel.PdfOneViewModel
 import com.example.viewmodel.PdfTool
 import com.example.ui.components.TopBar
 import com.example.ui.components.ToastMessage
+import com.example.ui.components.ToolIcon
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
@@ -689,18 +690,14 @@ fun ToolCard(
                     .padding(14.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(8.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = tool.icon, 
-                        contentDescription = null, 
-                        tint = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                ToolIcon(
+                    tool = tool,
+                    size = 40.dp,
+                    shape = RoundedCornerShape(8.dp),
+                    fallbackBackgroundColor = if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
+                    fallbackTint = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                    fallbackIconSize = 24.dp
+                )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     FlowRow(
@@ -769,18 +766,14 @@ fun ToolCard(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                     Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(8.dp)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = tool.icon, 
-                            contentDescription = null, 
-                            tint = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                    ToolIcon(
+                        tool = tool,
+                        size = 40.dp,
+                        shape = RoundedCornerShape(8.dp),
+                        fallbackBackgroundColor = if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
+                        fallbackTint = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                        fallbackIconSize = 24.dp
+                    )
                     IconButton(
                         onClick = onFavorite,
                         modifier = Modifier.size(36.dp)
@@ -882,22 +875,14 @@ fun GridToolCard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .background(
-                                    color = if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
-                                    shape = RoundedCornerShape(10.dp)
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = tool.icon,
-                                contentDescription = null,
-                                tint = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
+                        ToolIcon(
+                            tool = tool,
+                            size = 36.dp,
+                            shape = RoundedCornerShape(10.dp),
+                            fallbackBackgroundColor = if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
+                            fallbackTint = if (tool.isPro) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                            fallbackIconSize = 20.dp
+                        )
                         if (tool.badge != null) {
                             Surface(
                                 color = if (tool.isPro) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer,
